@@ -8,7 +8,7 @@ public class LoginPage extends BasePage {
     private final String passwordInput = "#password";
     private final String loginButton = "button[type='submit']";
     private final String message = "#flash";
-    //It's better to be as specific as it can be to avoid issues if the page strcutre is changed. Thats why
+    //It's better to be as specific as it can be to avoid issues if the page structure is changed.
     private final String secureAreaHeader = "h2:nth-of-type(1)";
     private final String loginPageHeader = "h2:nth-of-type(1)";
 

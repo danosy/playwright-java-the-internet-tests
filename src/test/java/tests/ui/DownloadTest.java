@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ui.pages.DownloadPage;
-import ui.pages.DropDownPage;
 
 public class DownloadTest extends BaseTest {
     DownloadPage downloadPage;

@@ -1,6 +1,5 @@
 package ui.factory;
 
-import api.model.Entities;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import ui.pages.*;

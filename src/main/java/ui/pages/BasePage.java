@@ -4,7 +4,7 @@ import com.microsoft.playwright.Page;
 import ui.constants.ArrowKeys;
 import ui.constants.Constants;
 
-public class BasePage {
+public abstract class BasePage {
     protected Page page;
 
     public BasePage(Page page) {

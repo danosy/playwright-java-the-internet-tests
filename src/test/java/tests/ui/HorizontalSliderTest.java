@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
+import config.TestConfig;
 import ui.constants.ArrowKeys;
 import ui.pages.HorizontalSliderPage;
 
@@ -20,7 +21,7 @@ public class HorizontalSliderTest extends BaseTest {
 
     @Test
     void moveSliderUpValidation() {
-        horizontalSliderPage.navigate("https://the-internet.herokuapp.com/horizontal_slider");
+        horizontalSliderPage.navigate(TestConfig.baseUIUrl() + "/horizontal_slider");
         horizontalSliderPage.focusOnSlider();
         horizontalSliderPage.clickKeyboardArrowKey(ArrowKeys.UP);
         log.info(horizontalSliderPage.getSliderValue());

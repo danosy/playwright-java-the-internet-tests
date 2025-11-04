@@ -1,5 +1,6 @@
 package tests.ui;
 
+import config.TestConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,6 @@ public class BrokenImagesTest extends BaseTest {
 
     @Test
     public void checkIfImageBroken() {
-        brokenImagesPage.navigate("https://the-internet.herokuapp.com/broken_images");
+        brokenImagesPage.navigate(TestConfig.baseUIUrl() + "/broken_images");
     }
 }
