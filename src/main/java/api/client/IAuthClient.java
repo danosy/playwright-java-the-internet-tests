@@ -6,5 +6,5 @@ import api.model.LoginResponse;
 import results.Result;
 
 public interface IAuthClient {
-    Result<LoginResponse, APIError> login(LoginRequest req);
+    Result<LoginResponse, APIError> login(LoginRequest request);
 }

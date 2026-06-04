@@ -7,9 +7,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
+import tests.ui.base.BaseUITest;
 import ui.pages.DynamicLoadingPage;
 
-public class DynamicLoadingTest extends BaseTest{
+public class DynamicLoadingTest extends BaseUITest {
     private DynamicLoadingPage dynamicLoadingPage;
     Logger log = LogManager.getLogger(DynamicLoadingPage.class);
 

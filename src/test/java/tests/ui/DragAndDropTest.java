@@ -5,9 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tests.ui.base.BaseUITest;
 import ui.pages.DragAndDropPage;
 
-public class DragAndDropTest extends BaseTest{
+public class DragAndDropTest extends BaseUITest {
     DragAndDropPage dragAndDropPage;
     Logger log = LogManager.getLogger(DragAndDropPage.class);
 

@@ -1,5 +1,6 @@
 package tests.ui;
 
+import tests.ui.base.BaseUITest;
 import ui.constants.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ui.pages.LoginPage;
 
-public class LoginTest extends BaseTest {
+public class LoginTest extends BaseUITest {
     Logger log = LogManager.getLogger(LoginTest.class);
     private LoginPage loginPage;
 
@@ -26,7 +27,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     public void testSuccessfulLogin() {
-        loginPage.login("tomsmith", "SuperSecretPassword!");
+        loginPage.login("tomsmith1", "SuperSecretPassword!");
         Assertions.assertEquals(Constants.secureAreaHeader, loginPage.getSecureAreaHeader());
         Assertions.assertEquals(Constants.loginSuccessMessage, loginPage.getMessage());
     }

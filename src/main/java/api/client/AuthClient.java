@@ -14,15 +14,16 @@ public class AuthClient extends BaseAPIClient implements IAuthClient {
     private static final Logger log = LogManager.getLogger(AuthClient.class);
 
     @Override
-    public Result<LoginResponse, APIError> login(LoginRequest loginRequest) {
+    public Result<LoginResponse, APIError> login(LoginRequest request) {
         try {
             log.info("POST {}", Endpoints.AUTH_LOGIN.getFullPath());
-            Response result = post(Endpoints.AUTH_LOGIN.getFullPath(), loginRequest);
+            Response result = post(Endpoints.AUTH_LOGIN.getFullPath(), request);
             int statusCode = result.statusCode();
             if (statusCode >= 200 && statusCode < 300)
                 return new Result.Ok<>(result.as(LoginResponse.class));
             return new Result.Err<>(new APIError(statusCode, safeBody(result), "Login should succeed", null));
         } catch (Exception exception) {
+
             return new Result.Err<>(new APIError(-1, null, "Unexpected client error", exception));
         }
     }

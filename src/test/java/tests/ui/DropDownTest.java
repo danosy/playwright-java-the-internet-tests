@@ -5,9 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tests.ui.base.BaseUITest;
 import ui.pages.DropDownPage;
 
-public class DropDownTest extends BaseTest {
+public class DropDownTest extends BaseUITest {
     DropDownPage dropDownPage;
     Logger log = LogManager.getLogger(DropDownTest.class);
 

@@ -1,6 +1,6 @@
 package api.model;
 
-public class LoginRequest {
+public class LoginRequest extends BaseEntity {
     @com.fasterxml.jackson.annotation.JsonProperty("username")
     private String username;
     @com.fasterxml.jackson.annotation.JsonProperty("password")

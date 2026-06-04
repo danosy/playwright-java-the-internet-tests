@@ -13,20 +13,23 @@ public class ErrorContext {
     public final String testName;
     public final Instant timestamp;
 
-    private ErrorContext(Builder builder) {
-        this.log = builder.log; this.artifactsDir = builder.artifactsDir; this.page = builder.page;
-        this.testName = builder.testName; this.timestamp = builder.timestamp;
+    public ErrorContext(Builder builder) {
+        this.log = builder.log;
+        this.artifactsDir = builder.artifactsDir;
+        this.page = builder.page;
+        this.testName = builder.testName;
+        this.timestamp = builder.timestamp;
     }
     public static class Builder {
         private Logger log;
         private Path artifactsDir;
         private Page page;
         private String testName = "test";
-        private Instant timestamp = Instant.now();
-        public Builder log(Logger l){ this.log=l; return this; }
-        public Builder artifacts(Path p){ this.artifactsDir=p; return this; }
-        public Builder page(Page p){ this.page=p; return this; }
-        public Builder testName(String t){ this.testName=t; return this; }
+        private final Instant timestamp = Instant.now();
+        public Builder log(Logger logger){ this.log=logger; return this; }
+        public Builder artifacts(Path path){ this.artifactsDir=path; return this; }
+        public Builder page(Page page){ this.page=page; return this; }
+        public Builder testName(String testName){ this.testName=testName; return this; }
         public ErrorContext build(){ return new ErrorContext(this); }
     }
 }

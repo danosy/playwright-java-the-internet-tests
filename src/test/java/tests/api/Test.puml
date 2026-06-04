@@ -1,0 +1,207 @@
+@startuml
+title Extended Class Diagram – UI, API, Core, Infra, Config, Tests
+
+' ---------- CORE ----------
+package "core" {
+  interface Result<T, E> {
+    + isSuccess(): boolean
+    + isFailure(): boolean
+  }
+
+  class Success<T> implements Result<T, E> {
+    + value: T
+    + isSuccess(): boolean
+    + isFailure(): boolean
+  }
+
+  class Failure<E> implements Result<T, E> {
+    + error: E
+    + isSuccess(): boolean
+    + isFailure(): boolean
+  }
+
+  class UiError {
+    + message: String
+    + cause: Throwable
+  }
+
+  class ApiError {
+    + statusCode: int
+    + message: String
+    + bodySnippet: String
+  }
+
+  class CustomAssertions {
+    + assertVisible(text: String): void
+    + assertStatusOk(code: int): void
+  }
+
+  class RetryPolicy {
+    - maxAttempts: int
+    - backoffMillis: long
+    + <<constructor>>(maxAttempts: int, backoffMillis: long)
+    + <T> execute(supplier: java.util.function.Supplier<T>): T
+  }
+}
+
+' ---------- CONFIG ----------
+package "config" {
+  class TestConfig {
+    + baseUIUrl(): String
+    + baseApiUrl(): String
+    + headless(): boolean
+    + timeoutSeconds(): int
+  }
+}
+
+' ---------- INFRA (UI + API wiring) ----------
+package "infra" {
+  class AppModule <<module>> {
+    + providePlaywrightProvider(): PlaywrightProvider
+    + provideApiClient(): ApiClient
+    + provideRetryPolicy(): RetryPolicy
+  }
+
+  class PlaywrightProvider <<factory>> {
+    + getBrowser(): com.microsoft.playwright.Browser
+    + getContext(): com.microsoft.playwright.BrowserContext
+    + getPage(): com.microsoft.playwright.Page
+    + closeAll(): void
+  }
+
+  class ApiClient {
+    - baseUrl: String
+    + withAuth(token: String): ApiClient
+    + get(path: String): Response
+    + post(path: String, body: Object): Response
+  }
+
+  class Response {
+    + statusCode(): int
+    + body(): String
+    + header(name: String): String
+  }
+}
+
+' ---------- UI LAYER ----------
+package "ui.pages" {
+  abstract class BasePage <<page>> {
+    # provider: PlaywrightProvider
+    + waitForReady(): void
+    + isVisible(): boolean
+  }
+
+  class LoginPage <<page>> {
+    + open(): void
+    + login(username: String, password: String): Result<DashboardPage, UiError>
+  }
+
+  class DashboardPage <<page>> {
+    + isLoaded(): boolean
+    + title(): String
+  }
+}
+
+package "ui.components" {
+  abstract class BaseComponent <<component>> {
+    # provider: PlaywrightProvider
+    + isVisible(): boolean
+  }
+
+  class Header <<component>> {
+    + openProfile(): void
+    + logout(): void
+  }
+}
+
+' ---------- API LAYER ----------
+package "api.endpoints" {
+  class AuthApi <<endpoint>> {
+    - client: ApiClient
+    + login(request: LoginRequest): Result<LoginResponse, ApiError>
+  }
+
+  class UsersApi <<endpoint>> {
+    - client: ApiClient
+    + getUser(id: long): Result<User, ApiError>
+    + listUsers(): Result<java.util.List<User>, ApiError>
+  }
+}
+
+package "api.models" {
+  class LoginRequest <<dto>> {
+    + username: String
+    + password: String
+  }
+
+  class LoginResponse <<dto>> {
+    + token: String
+    + userId: long
+  }
+
+  class User <<dto>> {
+    + id: long
+    + name: String
+    + email: String
+  }
+}
+
+' ---------- TESTS ----------
+package "tests" {
+  class BaseTest <<test>> {
+    + setUp(): void
+    + tearDown(): void
+  }
+
+  class LoginUiTest <<test>>
+  class AuthApiTest <<test>>
+}
+
+' ===== Inheritance =====
+BasePage <|-- LoginPage
+BasePage <|-- DashboardPage
+BaseComponent <|-- Header
+Success --> Result
+Failure --> Result
+
+' ===== Associations / Dependencies =====
+' UI depends on infra and core
+BasePage --> PlaywrightProvider : uses
+BaseComponent --> PlaywrightProvider : uses
+LoginPage ..> DashboardPage : returns on success
+LoginPage ..> UiError : failure type
+DashboardPage --> PlaywrightProvider : uses
+
+' API endpoints depend on ApiClient and models
+AuthApi --> ApiClient : uses
+UsersApi --> ApiClient : uses
+AuthApi ..> LoginRequest
+AuthApi ..> LoginResponse
+UsersApi ..> User
+
+' Result typings
+Success --> LoginResponse
+Failure --> ApiError
+
+' Infra depends on config
+PlaywrightProvider --> TestConfig : reads
+ApiClient --> TestConfig : reads
+AppModule --> TestConfig : reads
+
+' Core can be used by both UI and API layers
+LoginPage --> Result
+AuthApi --> Result
+UsersApi --> Result
+
+' Tests depend on Pages/Endpoints and Core (assertions)
+LoginUiTest --|> BaseTest
+AuthApiTest --|> BaseTest
+LoginUiTest ..> LoginPage
+AuthApiTest ..> AuthApi
+AuthApiTest ..> CustomAssertions
+LoginUiTest ..> CustomAssertions
+
+' BaseTest typically coordinates infra lifecycle (through DI/module)
+BaseTest ..> AppModule : initialize DI / providers
+
+@enduml

@@ -6,10 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
 import config.TestConfig;
+import tests.ui.base.BaseUITest;
 import ui.constants.ArrowKeys;
 import ui.pages.HorizontalSliderPage;
 
-public class HorizontalSliderTest extends BaseTest {
+public class HorizontalSliderTest extends BaseUITest {
     private HorizontalSliderPage horizontalSliderPage;
     Logger log = LogManager.getLogger(AddElementsTest.class);
 

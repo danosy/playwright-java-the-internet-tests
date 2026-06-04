@@ -5,10 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
+import tests.ui.base.BaseUITest;
 import ui.pages.CheckboxesPage;
 import ui.pages.MainPage;
 
-public class CheckboxesTest extends BaseTest {
+public class CheckboxesTest extends BaseUITest {
     private MainPage mainPage;
     private CheckboxesPage checkboxesPage;
     Logger log = LogManager.getLogger(CheckboxesTest.class);

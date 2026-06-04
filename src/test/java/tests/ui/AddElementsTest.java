@@ -5,9 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tests.ui.base.BaseUITest;
 import ui.pages.AddElementsPage;
 
-public class AddElementsTest extends BaseTest {
+public class AddElementsTest extends BaseUITest {
     private AddElementsPage addElementsPage;
     Logger log = LogManager.getLogger(AddElementsTest.class);
 

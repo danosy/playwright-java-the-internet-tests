@@ -10,6 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class APIErrorHandler implements IErrorHandler {
     private static final Logger log = LogManager.getLogger(APIErrorHandler.class);
@@ -36,11 +39,17 @@ public class APIErrorHandler implements IErrorHandler {
 
     private void saveBody(APIException api, ErrorContext ctx) {
         try {
-            var out = ctx.artifactsDir.resolve(ctx.testName + "_response.json");
+            var timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS")
+                    .withZone(ZoneId.systemDefault())
+                    .format(Instant.now());
+
+            Files.createDirectories(ctx.artifactsDir);
+
+            var out = ctx.artifactsDir.resolve(ctx.testName + "_" + timestamp + "_response.json");
             Files.writeString(out, api.getResponseBody() == null ? "" : api.getResponseBody());
             log.info("Saved API response -> {}", out.toAbsolutePath());
         } catch (Exception exception) {
-            log.warn("Failed saving API response body", exception);
+            log.error("Failed saving API response body", exception);
         }
     }
 }

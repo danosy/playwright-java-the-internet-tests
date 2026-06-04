@@ -5,9 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
+import tests.ui.base.BaseUITest;
 import ui.pages.ExitIntentPage;
 
-public class ExitIntentTest extends BaseTest {
+public class ExitIntentTest extends BaseUITest {
     Logger log = LogManager.getLogger(ExitIntentTest.class);
     private ExitIntentPage exitIntentPage;
 

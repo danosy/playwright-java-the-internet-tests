@@ -5,9 +5,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tests.ui.base.BaseUITest;
 import ui.pages.BrokenImagesPage;
 
-public class BrokenImagesTest extends BaseTest {
+public class BrokenImagesTest extends BaseUITest {
     private BrokenImagesPage brokenImagesPage;
     Logger log = LogManager.getLogger(AddElementsTest.class);
 

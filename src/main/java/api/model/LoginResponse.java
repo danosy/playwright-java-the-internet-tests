@@ -3,14 +3,14 @@ package api.model;
 import api.model.enums.Gender;
 
 public class LoginResponse extends BaseEntity {
-    String accessToken;
-    String refreshToken;
-    String username;
-    String firstName;
-    String lastName;
-    String email;
-    Gender gender;
-    String image;
+    private String accessToken;
+    private String refreshToken;
+    private String username;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private Gender gender;
+    private String image;
 
     public LoginResponse() {
     }
@@ -94,7 +94,7 @@ public class LoginResponse extends BaseEntity {
     @Override
     public String toString() {
         return "LoginResponse{" +
-                "id=" + this.id +
+                "id=" + this.getId() +
                 ", accessToken='" + accessToken + '\'' +
                 ", refreshToken='" + refreshToken + '\'' +
                 ", username='" + username + '\'' +

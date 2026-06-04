@@ -7,6 +7,11 @@ import errors.interfaces.IErrorHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Files;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 public class UIErrorHandler implements IErrorHandler {
     private static final Logger log = LogManager.getLogger(UIErrorHandler.class);
 
@@ -14,8 +19,14 @@ public class UIErrorHandler implements IErrorHandler {
     public void handle(AppException exception, ErrorContext ctx) {
         log.error("UI error: {} | hint={} | test={}", exception.getMessage(), exception.getHint(), ctx.testName);
         try {
+            var timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS")
+                    .withZone(ZoneId.systemDefault())
+                    .format(Instant.now());
+
+            Files.createDirectories(ctx.artifactsDir);
+
             if (ctx.page != null) {
-                var shot = ctx.artifactsDir.resolve(ctx.testName + "_fail.png");
+                var shot = ctx.artifactsDir.resolve(ctx.testName + "_" + timestamp + "_fail.png");
                 ctx.page.screenshot(new Page.ScreenshotOptions().setPath(shot).setFullPage(true));
                 log.info("Saved screenshot -> {}", shot.toAbsolutePath());
             }

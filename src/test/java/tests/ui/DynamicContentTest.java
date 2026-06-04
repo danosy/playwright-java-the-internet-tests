@@ -1,12 +1,12 @@
 package tests.ui;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.microsoft.playwright.Locator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tests.ui.base.BaseUITest;
 import ui.pages.DynamicContentPage;
 
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DynamicContentTest extends BaseTest {
+public class DynamicContentTest extends BaseUITest {
     Logger log = LogManager.getLogger(DynamicContentTest.class);
     DynamicContentPage dynamicContentPage;
 

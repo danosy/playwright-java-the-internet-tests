@@ -5,10 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
-import ui.pages.DragAndDropPage;
+import tests.ui.base.BaseUITest;
 import ui.pages.IFramePage;
 
-public class IFrameTest extends BaseTest {
+public class IFrameTest extends BaseUITest {
     IFramePage iFramePage;
     Logger log = LogManager.getLogger(IFrameTest.class);
 
