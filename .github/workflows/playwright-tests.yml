@@ -30,11 +30,11 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
-      # 4. Install Playwright browsers with their system dependencies
-      - name: Install Playwright Browsers
-        run: ./gradlew run --args="install --with-deps" || java -cp "$(./gradlew -q compileJava && ./gradlew -q runtimeClasspath)" com.microsoft.playwright.CLI install --with-deps
+      # 4. Install OS dependencies required for browsers to run on Ubuntu
+      - name: Install Playwright Operating System Dependencies
+        run: npx playwright install-deps
 
-      # 5. Execute the automation suite
+      # 5. Execute the automation suite (Playwright will auto-download the browsers on startup)
       - name: Run Playwright Tests
         run: ./gradlew test
 
