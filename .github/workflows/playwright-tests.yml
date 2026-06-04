@@ -36,7 +36,7 @@ jobs:
 
       # 5. Execute the automation suite (Playwright will auto-download the browsers on startup)
       - name: Run Playwright Tests
-        run: ./gradlew test
+        run: xvfb-run ./gradlew test
 
       # 6. Upload Gradle HTML Test Reports so you can download them if anything fails
       - name: Upload Test Report
