@@ -32,7 +32,10 @@ jobs:
 
       # 4. Install OS dependencies required for browsers to run on Ubuntu
       - name: Install Playwright Operating System Dependencies
-        run: npx playwright install-deps
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y libvpx7
+            npx playwright install-deps
 
       # 5. Execute the automation suite (Playwright will auto-download the browsers on startup)
       - name: Run Playwright Tests
