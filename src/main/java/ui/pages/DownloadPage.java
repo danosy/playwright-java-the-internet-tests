@@ -8,7 +8,7 @@ import java.nio.file.Path;
 
 public class DownloadPage extends BasePage {
     private final String firstElement = "a[href=\"download/zero_bytes_file.txt\"]";
-    private final String secondElement = "a[href=\"download/example.json\"]";
+    private final String secondElement = "//*[@id=\"content\"]/div/a[2]";
 
     @Inject
     public DownloadPage(Page page) {
