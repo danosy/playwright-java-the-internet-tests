@@ -1,4 +1,4 @@
-name: Playwright Java Automation CI
+name: Playwright Java Automation CI (Gradle)
 
 on:
   push:
@@ -14,26 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 1. Setup Java with Gradle caching
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'maven'
+          cache: 'gradle'
 
-      - name: Build with Maven
-        run: mvn clean compile -DskipTests
+      # 2. Grant execution permission for the Gradle Wrapper (Required for Linux runners)
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
 
+      # 3. Build the project without running tests yet
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      # 4. Install Playwright browsers with their system dependencies
       - name: Install Playwright Browsers
-        run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps"
+        run: ./gradlew run --args="install --with-deps" || java -cp "$(./gradlew -q compileJava && ./gradlew -q runtimeClasspath)" com.microsoft.playwright.CLI install --with-deps
 
+      # 5. Execute the automation suite
       - name: Run Playwright Tests
-        run: mvn test
+        run: ./gradlew test
 
+      # 6. Upload Gradle HTML Test Reports so you can download them if anything fails
       - name: Upload Test Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: target/surefire-reports/
+          name: playwright-gradle-report
+          path: '**/build/reports/tests/test/'
           if-no-files-found: ignore
