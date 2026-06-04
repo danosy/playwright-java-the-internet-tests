@@ -20,6 +20,6 @@ public class BrokenImagesTest extends BaseUITest {
 
     @Test
     public void checkIfImageBroken() {
-        brokenImagesPage.navigate(TestConfig.baseUIUrl() + "/broken_images");
+        brokenImagesPage.navigate(TestConfig.getBaseUIUrl() + "/broken_images");
     }
 }

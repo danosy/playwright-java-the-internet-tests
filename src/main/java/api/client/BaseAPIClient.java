@@ -1,16 +1,11 @@
 package api.client;
 
 import config.TestConfig;
-import errors.ErrorContext;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.apache.logging.log4j.Logger;
 
-
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static io.restassured.RestAssured.given;
 
@@ -19,7 +14,7 @@ public class BaseAPIClient {
 
     public BaseAPIClient() {
         spec = new RequestSpecBuilder()
-                .setBaseUri(TestConfig.baseAPIUrl())
+                .setBaseUri(TestConfig.getBaseAPIUrl())
                 .setContentType(ContentType.JSON)
                 .build();
     }

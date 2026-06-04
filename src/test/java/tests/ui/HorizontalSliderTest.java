@@ -22,7 +22,7 @@ public class HorizontalSliderTest extends BaseUITest {
 
     @Test
     void moveSliderUpValidation() {
-        horizontalSliderPage.navigate(TestConfig.baseUIUrl() + "/horizontal_slider");
+        horizontalSliderPage.navigate(TestConfig.getBaseUIUrl() + "/horizontal_slider");
         horizontalSliderPage.focusOnSlider();
         horizontalSliderPage.clickKeyboardArrowKey(ArrowKeys.UP);
         log.info(horizontalSliderPage.getSliderValue());

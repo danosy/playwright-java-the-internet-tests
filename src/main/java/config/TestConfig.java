@@ -15,11 +15,11 @@ public class TestConfig {
         }
     }
 
-    public static String baseUIUrl() {
+    public static String getBaseUIUrl() {
         return properties.getProperty("baseUIUrl", "https://the-internet.herokuapp.com");
     }
 
-    public static String baseAPIUrl() {
+    public static String getBaseAPIUrl() {
         return properties.getProperty("baseAPIUrl", "https://dummyjson.com");
     }
 
