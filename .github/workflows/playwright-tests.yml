@@ -32,7 +32,7 @@ jobs:
 
       # 4. Install OS dependencies required for browsers to run on Ubuntu
       - name: Install Playwright Operating System Dependencies
-        run: ./gradlew -q compileJava && java -cp "$(./gradlew -q runtimeClasspath)" com.microsoft.playwright.CLI install-deps
+        run: npx playwright install-deps
 
       # 5. Execute the automation suite (Playwright will auto-download the browsers on startup)
       - name: Run Playwright Tests
