@@ -27,6 +27,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
+      - name: Install missing system dependencies
+        run: sudo apt-get install -y libasound2t64
+
       - name: Install Playwright browsers
         run: ./gradlew installPlaywrightBrowsers
 
