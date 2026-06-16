@@ -12,6 +12,7 @@ public class BaseAPITest {
             new FailureWatcher(
                     new APIErrorHandler(),
                     Paths.get(System.getProperty("artifactsDir", "build/artifacts")),
+                    null,
                     null
             );
 }

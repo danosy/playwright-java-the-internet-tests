@@ -2,9 +2,9 @@ package tests.ui;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testng.Assert;
 import tests.ui.base.BaseUITest;
 import ui.pages.EntryAdPage;
 
@@ -24,6 +24,6 @@ public class EntryAdTest extends BaseUITest {
         entryAdPage.waitForModalToLoad();
         entryAdPage.clickOnModalClose();
         entryAdPage.waitForModalToBeHidden();
-        Assert.assertTrue(entryAdPage.getModal().isHidden(), "Modal is not hidden");
+        Assertions.assertTrue(entryAdPage.getModal().isHidden(), "Modal is not hidden");
     }
 }

@@ -15,10 +15,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testImplementation 'org.testng:testng:7.5'
 
-    // Rest Assured and Jackson Dependencies
     implementation 'io.rest-assured:rest-assured:5.4.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.3'  // Add Jackson annotations dependency
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.3'
 
     implementation 'org.json:json:20231013'
 
@@ -30,9 +29,14 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
 }
 
+task installPlaywrightBrowsers(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.microsoft.playwright.CLI'
+    args = ['install', '--with-deps', 'chromium']
+}
+
 test {
     useJUnitPlatform()
-    maxParallelForks = 3
     testLogging {
         events "passed", "skipped", "failed"
     }

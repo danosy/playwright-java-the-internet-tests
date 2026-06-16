@@ -1,20 +1,22 @@
 package ui.ioc;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.microsoft.playwright.*;
 
-import java.nio.file.Paths;
-
 public class PlaywrightModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        Playwright playwright = Playwright.create();
-        boolean isCI = System.getenv("GITHUB_ACTIONS") != null;
 
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setHeadless(isCI).setDownloadsPath(Paths.get("C:\\Users\\yonid\\Downloads")));
-        bind(Playwright.class).toInstance(playwright);
-        BrowserContext context = browser.newContext(new Browser.NewContextOptions().setViewportSize(1920, 1080));
-        Page page = context.newPage();
-        bind(Page.class).toInstance(page);
+    @Provides
+    Playwright providePlaywright() {
+        return Playwright.create();
+    }
+
+    @Provides
+    Browser provideBrowser(Playwright playwright) {
+        return playwright.chromium().launch(
+                new BrowserType.LaunchOptions()
+                        .setHeadless(System.getenv("GITHUB_ACTIONS") != null)
+        );
     }
 }

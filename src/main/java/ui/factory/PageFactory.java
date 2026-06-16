@@ -7,7 +7,6 @@ import ui.pages.*;
 public class PageFactory {
     private final Injector injector;
 
-    @Inject
     public PageFactory(Injector injector) {
         this.injector = injector;
     }
