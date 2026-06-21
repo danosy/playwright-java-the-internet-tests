@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 group = 'org.example'
@@ -7,6 +8,14 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+allure {
+    adapter {
+        autoconfigure = true
+        aspectjWeaver = false
+    }
+    version = '2.27.0'
 }
 
 dependencies {
@@ -23,20 +32,20 @@ dependencies {
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 
-    implementation("com.microsoft.playwright:playwright:1.49.0")
+    implementation("com.microsoft.playwright:playwright:1.44.0")
     implementation("com.google.inject:guice:5.1.0")
     implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-}
 
-task installPlaywrightBrowsers(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.microsoft.playwright.CLI'
-    args = ['install', '--with-deps', 'chromium']
+    testImplementation 'io.qameta.allure:allure-junit5:2.27.0'
 }
 
 test {
     useJUnitPlatform()
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
+    systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'fixed'
+    systemProperty 'junit.jupiter.execution.parallel.config.fixed.parallelism', '8'
     testLogging {
         events "passed", "skipped", "failed"
     }

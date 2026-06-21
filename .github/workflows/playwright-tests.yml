@@ -36,6 +36,18 @@ jobs:
       - name: Run Playwright Tests
         run: ./gradlew test --tests "tests.ui.*"
 
+      - name: Generate Allure Report
+        if: always()
+        run: ./gradlew allureReport
+
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: build/reports/allure-report/
+          if-no-files-found: ignore
+
       - name: Upload test artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -44,16 +56,9 @@ jobs:
           path: build/artifacts/
           if-no-files-found: ignore
 
-      - name: Upload test report
+      - name: Publish Allure Report to GitHub Pages
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          name: playwright-gradle-report
-          path: build/reports/tests/test/
-          if-no-files-found: ignore
-
-      - name: Publish Playwright Report to GitHub Summary
-        if: always()
-        uses: rishabhgupta/playwright-report-summary-action@v2
-        with:
-            report-file: playwright-report/results.json
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/reports/allure-report/allureReport
