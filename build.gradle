@@ -43,7 +43,7 @@ dependencies {
 task installPlaywrightBrowsers(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
-    args = ['install', '--with-deps', 'chromium']
+    args = ['install', 'chromium']
 }
 
 test {

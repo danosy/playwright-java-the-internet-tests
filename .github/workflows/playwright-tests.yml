@@ -28,7 +28,9 @@ jobs:
         run: ./gradlew build -x test
 
       - name: Install missing system dependencies
-        run: sudo apt-get install -y libasound2t64
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2t64 libgbm1 libnss3 libxss1 libasound2t64 libatk-bridge2.0-0 libgtk-3-0
 
       - name: Install Playwright browsers
         run: ./gradlew installPlaywrightBrowsers
