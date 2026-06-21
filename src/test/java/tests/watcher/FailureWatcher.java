@@ -61,16 +61,24 @@ public class FailureWatcher implements TestWatcher {
     private void saveScreenshot(String testName) {
         if (pageSupplier == null) return;
         Page page = pageSupplier.get();
-        if (page == null) return;
+        if (page == null) {
+            System.out.println("[FailureWatcher] page is null, skipping screenshot");
+            return;
+        }
 
-        String safeTestName = testName.replaceAll("[^a-zA-Z0-9_\\-]", "_");
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        Path screenshotPath = artifactsDir.resolve("screenshots").resolve(safeTestName + "_" + timestamp + ".png");
-        screenshotPath.getParent().toFile().mkdirs();
-        page.screenshot(new Page.ScreenshotOptions().setPath(screenshotPath));
+        try {
+            String safeTestName = testName.replaceAll("[^a-zA-Z0-9_\\-]", "_");
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            Path screenshotPath = artifactsDir.resolve("screenshots").resolve(safeTestName + "_" + timestamp + ".png");
+            screenshotPath.getParent().toFile().mkdirs();
+            page.screenshot(new Page.ScreenshotOptions().setPath(screenshotPath));
 
-        byte[] screenshotBytes = page.screenshot();
-        Allure.addAttachment("Screenshot on failure", "image/png", new ByteArrayInputStream(screenshotBytes), "png");
+            byte[] screenshotBytes = page.screenshot();
+            Allure.addAttachment("Screenshot on failure", "image/png", new ByteArrayInputStream(screenshotBytes), "png");
+            System.out.println("[FailureWatcher] Screenshot attached to Allure successfully");
+        } catch (Exception exception) {
+            System.out.println("[FailureWatcher] Screenshot failed: " + exception.getMessage());
+        }
     }
 
     private void saveTrace(String testName) {
