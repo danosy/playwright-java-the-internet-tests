@@ -41,6 +41,14 @@ jobs:
       - name: Run Playwright Tests
         run: ./gradlew test --tests "tests.ui.*"
 
+      - name: Debug artifacts
+        if: always()
+        run: |
+          echo "=== Allure Results ==="
+          ls -la build/allure-results/ || echo "No allure-results"
+          echo "=== Screenshots ==="
+          ls -la build/artifacts/screenshots/ || echo "No screenshots"
+
       - name: Generate Allure Report
         if: always()
         run: ./gradlew allureReport

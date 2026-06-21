@@ -48,6 +48,7 @@ task installPlaywrightBrowsers(type: JavaExec) {
 
 test {
     useJUnitPlatform()
+    systemProperty 'allure.results.directory', 'build/allure-results'
     systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
     systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
     systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'fixed'
