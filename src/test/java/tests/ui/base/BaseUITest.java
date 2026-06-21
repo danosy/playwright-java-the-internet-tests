@@ -30,9 +30,9 @@ public class BaseUITest {
             Paths.get(System.getProperty("artifactsDir", "build/artifacts")),
             PAGE::get,
             BROWSER_CONTEXT::get,
-                () -> {
-                    PAGE.remove();
-                    BROWSER_CONTEXT.remove();
+            () -> {
+                PAGE.remove();
+                BROWSER_CONTEXT.remove();
             }
     );
 
@@ -46,9 +46,7 @@ public class BaseUITest {
     @AfterEach
     public void tearDownBase() {
         testSetup.close();
-//        PAGE.remove();
-//        BROWSER_CONTEXT.remove();
-//        INJECTOR.remove();
+        INJECTOR.remove();
     }
 
     public PageFactory getPageFactory() {

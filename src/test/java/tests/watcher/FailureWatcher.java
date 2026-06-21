@@ -7,6 +7,7 @@ import errors.ErrorContext;
 import errors.exceptions.AppException;
 import errors.interfaces.IErrorHandler;
 import io.qameta.allure.Allure;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 
@@ -16,16 +17,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Supplier;
 
-public class FailureWatcher implements TestWatcher {
+public class FailureWatcher implements TestWatcher, AfterEachCallback {
+
+    private static final ExtensionContext.Namespace NAMESPACE =
+            ExtensionContext.Namespace.create(FailureWatcher.class);
+
     private final IErrorHandler handler;
     private final Path artifactsDir;
     private final Supplier<Page> pageSupplier;
     private final Supplier<BrowserContext> contextSupplier;
     private final Runnable cleanupCallback;
 
-    public FailureWatcher(IErrorHandler errorHandler, Path dir, Supplier<Page> pageSupplier, Supplier<BrowserContext> contextSupplier, Runnable cleanupCallback) {
+    public FailureWatcher(IErrorHandler errorHandler, Path artifactsDir, Supplier<Page> pageSupplier, Supplier<BrowserContext> contextSupplier, Runnable cleanupCallback) {
         this.handler = errorHandler;
-        this.artifactsDir = dir;
+        this.artifactsDir = artifactsDir;
         this.pageSupplier = pageSupplier;
         this.contextSupplier = contextSupplier;
         this.cleanupCallback = cleanupCallback;
@@ -33,8 +38,7 @@ public class FailureWatcher implements TestWatcher {
 
     @Override
     public void testFailed(ExtensionContext extensionContext, Throwable cause) {
-        saveScreenshot(extensionContext.getDisplayName());
-        saveTrace(extensionContext.getDisplayName());
+        extensionContext.getStore(NAMESPACE).put("failed", true);
 
         if (cause instanceof AppException appException) {
             var errorContext = new ErrorContext.Builder()
@@ -44,17 +48,29 @@ public class FailureWatcher implements TestWatcher {
                     .build();
             handler.handle(appException, errorContext);
         }
-
-        if (cleanupCallback != null) cleanupCallback.run();
     }
 
     @Override
     public void testSuccessful(ExtensionContext extensionContext) {
-        if (cleanupCallback != null) cleanupCallback.run();
+        extensionContext.getStore(NAMESPACE).put("failed", false);
     }
 
     @Override
     public void testAborted(ExtensionContext extensionContext, Throwable cause) {
+        extensionContext.getStore(NAMESPACE).put("failed", false);
+    }
+
+    @Override
+    public void afterEach(ExtensionContext extensionContext) {
+        boolean failed = Boolean.TRUE.equals(
+                extensionContext.getStore(NAMESPACE).get("failed", Boolean.class)
+        );
+
+        if (failed) {
+            saveScreenshot(extensionContext.getDisplayName());
+            saveTrace(extensionContext.getDisplayName());
+        }
+
         if (cleanupCallback != null) cleanupCallback.run();
     }
 
