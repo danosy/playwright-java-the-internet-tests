@@ -51,3 +51,9 @@ jobs:
           name: playwright-gradle-report
           path: build/reports/tests/test/
           if-no-files-found: ignore
+
+      - name: Publish Playwright Report to GitHub Summary
+        if: always()
+        uses: rishabhgupta/playwright-report-summary-action@v2
+        with:
+            report-file: playwright-report/results.json

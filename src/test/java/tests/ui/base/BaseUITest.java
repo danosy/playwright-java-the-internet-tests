@@ -44,6 +44,7 @@ public class BaseUITest {
         testSetup.close();
         PAGE.remove();
         BROWSER_CONTEXT.remove();
+        INJECTOR.remove();
     }
 
     public PageFactory getPageFactory() {
