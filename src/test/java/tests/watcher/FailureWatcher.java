@@ -21,12 +21,14 @@ public class FailureWatcher implements TestWatcher {
     private final Path artifactsDir;
     private final Supplier<Page> pageSupplier;
     private final Supplier<BrowserContext> contextSupplier;
+    private final Runnable cleanupCallback;
 
-    public FailureWatcher(IErrorHandler errorHandler, Path dir, Supplier<Page> pageSupplier, Supplier<BrowserContext> contextSupplier) {
+    public FailureWatcher(IErrorHandler errorHandler, Path dir, Supplier<Page> pageSupplier, Supplier<BrowserContext> contextSupplier, Runnable cleanupCallback) {
         this.handler = errorHandler;
         this.artifactsDir = dir;
         this.pageSupplier = pageSupplier;
         this.contextSupplier = contextSupplier;
+        this.cleanupCallback = cleanupCallback;
     }
 
     @Override
@@ -42,6 +44,18 @@ public class FailureWatcher implements TestWatcher {
                     .build();
             handler.handle(appException, errorContext);
         }
+
+        if (cleanupCallback != null) cleanupCallback.run();
+    }
+
+    @Override
+    public void testSuccessful(ExtensionContext extensionContext) {
+        if (cleanupCallback != null) cleanupCallback.run();
+    }
+
+    @Override
+    public void testAborted(ExtensionContext extensionContext, Throwable cause) {
+        if (cleanupCallback != null) cleanupCallback.run();
     }
 
     private void saveScreenshot(String testName) {
@@ -49,14 +63,12 @@ public class FailureWatcher implements TestWatcher {
         Page page = pageSupplier.get();
         if (page == null) return;
 
-        // Save to disk
         String safeTestName = testName.replaceAll("[^a-zA-Z0-9_\\-]", "_");
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         Path screenshotPath = artifactsDir.resolve("screenshots").resolve(safeTestName + "_" + timestamp + ".png");
         screenshotPath.getParent().toFile().mkdirs();
         page.screenshot(new Page.ScreenshotOptions().setPath(screenshotPath));
 
-        // Attach to Allure report
         byte[] screenshotBytes = page.screenshot();
         Allure.addAttachment("Screenshot on failure", "image/png", new ByteArrayInputStream(screenshotBytes), "png");
     }
@@ -71,7 +83,6 @@ public class FailureWatcher implements TestWatcher {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         Path tracePath = artifactsDir.resolve("traces").resolve(safeTestName + "_" + timestamp + ".zip");
         tracePath.getParent().toFile().mkdirs();
-
 
         browserContext.tracing().stop(new Tracing.StopOptions().setPath(tracePath));
     }
