@@ -72,6 +72,7 @@ public class FailureWatcher implements TestWatcher {
         Path tracePath = artifactsDir.resolve("traces").resolve(safeTestName + "_" + timestamp + ".zip");
         tracePath.getParent().toFile().mkdirs();
 
+
         browserContext.tracing().stop(new Tracing.StopOptions().setPath(tracePath));
     }
 }
