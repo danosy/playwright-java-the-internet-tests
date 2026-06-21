@@ -1,5 +1,8 @@
 name: Playwright Java Automation CI (Gradle)
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main, master ]
