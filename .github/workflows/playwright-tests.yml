@@ -2,6 +2,8 @@ name: Playwright Java Automation CI (Gradle)
 
 permissions:
   contents: write
+  pages: write # Added permission for GitHub Pages deployment
+  id-token: write # Added permission for GitHub Pages deployment
 
 on:
   push:
@@ -12,6 +14,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # Define environment for GitHub Pages
 
     steps:
       - name: Checkout code
@@ -53,12 +58,12 @@ jobs:
         if: always()
         run: ./gradlew allureReport
 
-      - name: Upload Allure Report
+      - name: Upload Allure Report artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: build/reports/allure-report/
+          path: build/reports/allure-report/allureReport/
           if-no-files-found: ignore
 
       - name: Upload test artifacts on failure
@@ -69,9 +74,26 @@ jobs:
           path: build/artifacts/
           if-no-files-found: ignore
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        id: pages
+
       - name: Publish Allure Report to GitHub Pages
+        id: deployment # Added ID for output
         if: always()
-        uses: peaceiris/actions-gh-pages@v3
+        uses: actions/upload-pages-artifact@v3 # Changed to official GitHub Pages action
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build/reports/allure-report/allureReport
+          path: build/reports/allure-report/allureReport # Path to your generated Allure report
+
+      - name: Deploy to GitHub Pages
+        id: deployment_pages # Added ID for output
+        if: always()
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print Allure Report URL
+        if: always()
+        run: |
+          echo "Allure Report URL: ${{ steps.deployment_pages.outputs.page_url }}"
+          echo "::notice::Allure Report URL: ${{ steps.deployment_pages.outputs.page_url }}"
