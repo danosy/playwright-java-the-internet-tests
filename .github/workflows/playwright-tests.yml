@@ -95,5 +95,8 @@ jobs:
       - name: Print Allure Report URL
         if: always()
         run: |
-          echo "Allure Report URL: ${{ steps.deployment_pages.outputs.page_url }}"
-          echo "::notice::Allure Report URL: ${{ steps.deployment_pages.outputs.page_url }}"
+          ALLURE_URL="${{ steps.deployment_pages.outputs.page_url }}"
+          echo "Allure Report URL: $ALLURE_URL"
+          echo "::notice::Allure Report URL: $ALLURE_URL"
+          echo "### Allure Report" >> $GITHUB_STEP_SUMMARY
+          echo "- [View Allure Report]($ALLURE_URL)" >> $GITHUB_STEP_SUMMARY
