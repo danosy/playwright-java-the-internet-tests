@@ -6,28 +6,29 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
 
 public class ExitIntentPage extends BasePage{
-    private final String outOfBoundsModal = "#ouibounce-modal";
-    //In this example you can see that you can skip one element. you just need the end element. You don't even need another element. You can just go stright to it.
-    private final String closeButton = "#ouibounce-modal p:has-text('Close')";
+    private final Locator outOfBoundsModal;
+    private final Locator closeButton;
 
     @Inject
     public ExitIntentPage(Page page) {
         super(page);
+        this.outOfBoundsModal = page.locator("#ouibounce-modal");
+        this.closeButton = page.locator("#ouibounce-modal p:has-text('Close')");
     }
 
     public Locator getOutOfBoundsModal() {
-        return page.locator(outOfBoundsModal);
+        return outOfBoundsModal;
     }
 
     public void waitForModalToAppear() {
-        getOutOfBoundsModal().waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        outOfBoundsModal.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
     }
 
     public void waitForModalToBeHidden() {
-        getOutOfBoundsModal().waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
+        outOfBoundsModal.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }
 
     public void clickOnClose() {
-        page.click(closeButton);
+        closeButton.click();
     }
 }

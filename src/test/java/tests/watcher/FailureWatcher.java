@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 
 import java.io.ByteArrayInputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,8 +20,8 @@ import java.util.function.Supplier;
 
 public class FailureWatcher implements TestWatcher, AfterEachCallback {
 
-    private static final ExtensionContext.Namespace NAMESPACE =
-            ExtensionContext.Namespace.create(FailureWatcher.class);
+    // Removed ThreadLocal as it's no longer needed with getExecutionException()
+    // private static final ThreadLocal<Boolean> testFailedStatus = ThreadLocal.withInitial(() -> false);
 
     private final IErrorHandler handler;
     private final Path artifactsDir;
@@ -33,12 +34,14 @@ public class FailureWatcher implements TestWatcher, AfterEachCallback {
         this.artifactsDir = artifactsDir;
         this.pageSupplier = pageSupplier;
         this.contextSupplier = contextSupplier;
+        // Simplified cleanupCallback as ThreadLocal is removed
         this.cleanupCallback = cleanupCallback;
     }
 
     @Override
     public void testFailed(ExtensionContext extensionContext, Throwable cause) {
-        extensionContext.getStore(NAMESPACE).put("failed", true);
+        // This method is still called, but we will rely on getExecutionException() in afterEach
+        System.out.println("[FailureWatcher] TestWatcher: testFailed for '" + extensionContext.getDisplayName() + "'. Cause: " + cause.getMessage());
 
         if (cause instanceof AppException appException) {
             var errorContext = new ErrorContext.Builder()
@@ -52,21 +55,23 @@ public class FailureWatcher implements TestWatcher, AfterEachCallback {
 
     @Override
     public void testSuccessful(ExtensionContext extensionContext) {
-        extensionContext.getStore(NAMESPACE).put("failed", false);
+        // This method is still called, but we will rely on getExecutionException() in afterEach
+        System.out.println("[FailureWatcher] TestWatcher: testSuccessful for '" + extensionContext.getDisplayName() + "'.");
     }
 
     @Override
     public void testAborted(ExtensionContext extensionContext, Throwable cause) {
-        extensionContext.getStore(NAMESPACE).put("failed", false);
+        // This method is still called, but we will rely on getExecutionException() in afterEach
+        System.out.println("[FailureWatcher] TestWatcher: testAborted for '" + extensionContext.getDisplayName() + "'. Cause: " + cause.getMessage());
     }
 
     @Override
     public void afterEach(ExtensionContext extensionContext) {
-        boolean failed = Boolean.TRUE.equals(
-                extensionContext.getStore(NAMESPACE).get("failed", Boolean.class)
-        );
+        boolean failed = extensionContext.getExecutionException().isPresent(); // Correctly check for failure
+        System.out.println("[FailureWatcher] In afterEach for test '" + extensionContext.getDisplayName() + "'. Test failed: " + failed);
 
         if (failed) {
+            System.out.println("[FailureWatcher] Calling saveScreenshot for failed test: " + extensionContext.getDisplayName());
             saveScreenshot(extensionContext.getDisplayName());
             saveTrace(extensionContext.getDisplayName());
         }
@@ -75,25 +80,33 @@ public class FailureWatcher implements TestWatcher, AfterEachCallback {
     }
 
     private void saveScreenshot(String testName) {
-        if (pageSupplier == null) return;
+        System.out.println("[FailureWatcher] Attempting to save screenshot for test: " + testName);
+        if (pageSupplier == null) {
+            System.out.println("[FailureWatcher] pageSupplier is null, skipping screenshot");
+            return;
+        }
         Page page = pageSupplier.get();
         if (page == null) {
             System.out.println("[FailureWatcher] page is null, skipping screenshot");
             return;
         }
+        System.out.println("[FailureWatcher] Page object is available for screenshot.");
 
         try {
+            byte[] screenshotBytes = page.screenshot();
+
             String safeTestName = testName.replaceAll("[^a-zA-Z0-9_\\-]", "_");
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             Path screenshotPath = artifactsDir.resolve("screenshots").resolve(safeTestName + "_" + timestamp + ".png");
             screenshotPath.getParent().toFile().mkdirs();
-            page.screenshot(new Page.ScreenshotOptions().setPath(screenshotPath));
+            Files.write(screenshotPath, screenshotBytes);
+            System.out.println("[FailureWatcher] Screenshot saved to: " + screenshotPath.toAbsolutePath());
 
-            byte[] screenshotBytes = page.screenshot();
             Allure.addAttachment("Screenshot on failure", "image/png", new ByteArrayInputStream(screenshotBytes), "png");
             System.out.println("[FailureWatcher] Screenshot attached to Allure successfully");
         } catch (Exception exception) {
             System.out.println("[FailureWatcher] Screenshot failed: " + exception.getMessage());
+            exception.printStackTrace();
         }
     }
 

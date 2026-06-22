@@ -5,14 +5,15 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class DynamicContentPage extends BasePage {
-    private final String imagesLocator = "img[src^='/img/avatars/Original-Facebook-Geek-Profile-Avatar']";
+    private final Locator imagesLocator;
 
     @Inject
     public DynamicContentPage(Page page) {
         super(page);
+        this.imagesLocator = page.locator("img[src^='/img/avatars/Original-Facebook-Geek-Profile-Avatar']");
     }
 
     public Locator getAllRandomImageSrc() {
-        return page.locator(imagesLocator);
+        return imagesLocator;
     }
 }

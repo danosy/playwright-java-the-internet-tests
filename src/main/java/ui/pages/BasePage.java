@@ -1,5 +1,6 @@
 package ui.pages;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import ui.constants.ArrowKeys;
 import ui.constants.Constants;
@@ -11,16 +12,12 @@ public abstract class BasePage {
         this.page = page;
     }
 
+    protected Locator locator(String selector) {
+        return page.locator(selector);
+    }
+
     public void navigate(String url) {
         page.navigate(url);
-    }
-
-    public void click(String selector) {
-        page.click(selector);
-    }
-
-    public void fill(String selector, String value) {
-        page.fill(selector, value);
     }
 
     public void reload() {

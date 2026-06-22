@@ -1,18 +1,21 @@
 package ui.pages;
 
 import com.google.inject.Inject;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import java.io.File;
 import java.nio.file.Path;
 
 public class DownloadPage extends BasePage {
-    private final String firstElement = "a[href=\"download/zero_bytes_file.txt\"]";
-    private final String secondElement = "//*[@id=\"content\"]/div/a[2]";
+    private final Locator firstElement;
+    private final Locator secondElement;
 
     @Inject
     public DownloadPage(Page page) {
         super(page);
+        this.firstElement = page.locator("a[href=\"download/zero_bytes_file.txt\"]");
+        this.secondElement = page.locator("//*[@id=\"content\"]/div/a[2]");
         implementDownloadListener(page);
     }
 
@@ -32,10 +35,10 @@ public class DownloadPage extends BasePage {
     }
 
     public void clickOnFirstElement() {
-        page.click(firstElement);
+        firstElement.click();
     }
 
     public void clickOnSecondElement() {
-        page.click(secondElement);
+        secondElement.click();
     }
 }

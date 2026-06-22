@@ -6,27 +6,29 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
 
 public class EntryAdPage extends BasePage{
-    private final String modal = "#modal";
-    private final String modalClose = "#modal .modal-footer p:has-text('Close')";
+    private final Locator modal;
+    private final Locator modalClose;
 
     @Inject
     public EntryAdPage(Page page) {
         super(page);
+        this.modal = page.locator("#modal");
+        this.modalClose = page.locator("#modal .modal-footer p:has-text('Close')");
     }
 
     public Locator getModal() {
-        return page.locator(modal);
+        return modal;
     }
 
     public void waitForModalToBeHidden() {
-        getModal().waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
+        modal.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.HIDDEN));
     }
 
     public void waitForModalToLoad() {
-        getModal().waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        modal.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
     }
 
     public void clickOnModalClose() {
-        page.click(modalClose);
+        modalClose.click();
     }
 }

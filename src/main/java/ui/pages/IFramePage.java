@@ -9,22 +9,18 @@ import utils.Utils;
 import java.util.function.Predicate;
 
 public class IFramePage extends BasePage {
-    private final String iframe = "#mce_0_ifr";
-    private final String textEditor = "#tinymce";
+    private final String iframeSelector = "#mce_0_ifr";
+    private final Locator textEditor;
 
     @Inject
     public IFramePage(Page page) {
         super(page);
-    }
-
-    private FrameLocator getTextEditor() {
-        return page.frameLocator(iframe);
+        this.textEditor = page.frameLocator(iframeSelector).locator("#tinymce");
     }
 
     public String getTextFromTextEditor() throws InterruptedException {
-        Locator textArea = getTextEditor().locator(textEditor);
-        Utils.poll(textArea::textContent, textNotEmpty(), 2500, 5);
-        return textArea.textContent().trim();
+        Utils.poll(textEditor::textContent, textNotEmpty(), 2500, 5);
+        return textEditor.textContent().trim();
     }
 
     private static Predicate<String> textNotEmpty() {

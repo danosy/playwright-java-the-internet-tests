@@ -5,22 +5,21 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class DragAndDropPage extends BasePage {
-    private final String boxA = "#column-a";
-    private final String boxB = "#column-b";
+    private final Locator boxA;
+    private final Locator boxB;
 
     @Inject
     public DragAndDropPage(Page page) {
         super(page);
+        this.boxA = page.locator("#column-a");
+        this.boxB = page.locator("#column-b");
     }
 
     public void dragAndDropAToB() {
-        Locator boxALocator = page.locator(boxA);
-        Locator boxBLocator = page.locator(boxB);
-
-        boxALocator.dragTo(boxBLocator);
+        boxA.dragTo(boxB);
     }
 
     public String getBoxBTextContent() {
-        return page.locator(boxB).textContent();
+        return boxB.textContent();
     }
 }

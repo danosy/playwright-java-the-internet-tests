@@ -6,25 +6,26 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitForSelectorState;
 
 public class DynamicLoadingPage extends BasePage{
-    //For a button inside a div. The button doesn't have an id. But it's the only button.
-    private final String startButton = "#start > button";
-    private final String finishContainer = "#finish";
+    private final Locator startButton;
+    private final Locator finishContainer;
 
     @Inject
     public DynamicLoadingPage(Page page) {
         super(page);
+        this.startButton = page.locator("#start > button");
+        this.finishContainer = page.locator("#finish");
     }
 
     public void clickOnStart() {
-        page.click(startButton);
+        startButton.click();
     }
 
     public Locator getFinishContainer() {
-        return page.locator(finishContainer);
+        return finishContainer;
     }
 
     public String waitForFinishedText() {
-        getFinishContainer().waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        return getFinishContainer().textContent().trim();
+        finishContainer.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        return finishContainer.textContent().trim();
     }
 }

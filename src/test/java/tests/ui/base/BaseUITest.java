@@ -18,11 +18,12 @@ import java.nio.file.Paths;
 public class BaseUITest {
     protected static final ThreadLocal<Page> PAGE = new ThreadLocal<>();
     protected static final ThreadLocal<BrowserContext> BROWSER_CONTEXT = new ThreadLocal<>();
+    protected static final ThreadLocal<TestsSetup> TEST_SETUP = new ThreadLocal<>(); // Made testSetup ThreadLocal
     private static final ThreadLocal<Injector> INJECTOR = ThreadLocal.withInitial(
             () -> Guice.createInjector(new PlaywrightModule())
     );
 
-    private TestsSetup testSetup;
+    // Removed private TestsSetup testSetup;
 
     @RegisterExtension
     static FailureWatcher uiWatcher = new FailureWatcher(
@@ -31,25 +32,31 @@ public class BaseUITest {
             PAGE::get,
             BROWSER_CONTEXT::get,
             () -> {
+                // This cleanupCallback is executed by FailureWatcher after it has processed the test result
+                if (TEST_SETUP.get() != null) {
+                    TEST_SETUP.get().close(); // Close Playwright resources
+                }
                 PAGE.remove();
                 BROWSER_CONTEXT.remove();
+                TEST_SETUP.remove(); // Clean up the ThreadLocal for TestsSetup
             }
     );
 
     @BeforeEach
     public void setUpBase() {
-        testSetup = new TestsSetup(INJECTOR.get());
-        PAGE.set(testSetup.getPage());
-        BROWSER_CONTEXT.set(testSetup.getBrowserContext());
+        TestsSetup currentTestSetup = new TestsSetup(INJECTOR.get());
+        TEST_SETUP.set(currentTestSetup); // Set the ThreadLocal TestsSetup
+        PAGE.set(currentTestSetup.getPage());
+        BROWSER_CONTEXT.set(currentTestSetup.getBrowserContext());
     }
 
     @AfterEach
     public void tearDownBase() {
-        testSetup.close();
+        // testSetup.close() is now handled by the cleanupCallback in FailureWatcher
         INJECTOR.remove();
     }
 
     public PageFactory getPageFactory() {
-        return testSetup.getPageFactory();
+        return TEST_SETUP.get().getPageFactory(); // Access via ThreadLocal
     }
 }

@@ -1,26 +1,29 @@
 package ui.pages;
 
 import com.google.inject.Inject;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class AddElementsPage extends BasePage {
-    private final String addElementButton = "button[onclick='addElement()']";
-    private final String deleteElementButton = "button[onclick='deleteElement()']";
+    private final Locator addElementButton;
+    private final Locator deleteElementButton;
 
     @Inject
     public AddElementsPage(Page page) {
         super(page);
+        this.addElementButton = page.locator("button[onclick='addElement()']");
+        this.deleteElementButton = page.locator("button[onclick='deleteElement()']");
     }
 
     public void clickOnAddElementButton() {
-        page.click(addElementButton);
+        addElementButton.click();
     }
 
     public void clickOnDeleteElementButton() {
-        page.click(deleteElementButton);
+        deleteElementButton.click();
     }
 
     public boolean isDeleteButtonVisible() {
-        return page.locator(deleteElementButton).isVisible();
+        return deleteElementButton.isVisible();
     }
 }
